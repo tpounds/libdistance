@@ -27,9 +27,9 @@ def damerau_levenshtein(lhs, rhs):
 
        >>> damerau_levenshtein('kitten', 'sitting')
        3
-       >>> daemerau_levenshtein('Saturday', 'Sunday')
+       >>> damerau_levenshtein('Saturday', 'Sunday')
        3
-       >>> daemerau_levenshtein('CA', 'ABC')
+       >>> damerau_levenshtein('CA', 'ABC')
        2
    '''
    d = [range(len(lhs)+1) for i in range(len(rhs)+1)]
