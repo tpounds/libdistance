@@ -1,0 +1,15 @@
+libdistance
+===========
+A pure python library containing popular distance string metric algorithms.
+
+libdistance is licensed under the MIT License.
+(http://www.opensource.org/licenses/mit-license.php)
+
+Usage
+=====
+import libdistance
+print libdistance.levenshtein('kitten', 'sitting')
+
+Testing
+=======
+python -m doctest -v libdistance/__init__.py
