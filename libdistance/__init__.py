@@ -18,10 +18,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+class Distance(object):
+   ''' A numeric distance encapsulating object providing additional
+       methods on distances.
+   '''
+   def __init__(self, distance, lhs, rhs):
+      self.distance = distance
+      self.lhs      = lhs
+      self.rhs      = rhs
+
+   def __repr__(self):
+      return str(self.distance)
+
+   def ratio(self):
+      ''' Return a metric for determining the two sequences similarity
+          as a floating point number within the range [0, 1].
+
+          The ratio calculation is performed as 2.0 * D / L, where D is
+          the distance and L is the total length of the two strings. The
+          returned value is 0.0 if the strings are identical and 1.0 if
+          they are completely different.
+
+          Note: The ratio is actually a complexity measurement of converting
+          one string to another based on the total length of the two strings.
+          The result varies depending on the distance algorithm selection.
+      '''
+      return (2.0 * self.distance) / (len(self.lhs) + len(self.rhs));
+
 def damerau_levenshtein(lhs, rhs):
-   ''' Compute the Damerau-Levenshtein distance counting the minimum number of edits
-       (e.g. insert, delete, substition, transposition) to transform one object to
-       another.
+   ''' Compute the Damerau-Levenshtein distance counting the minimum number
+       of edits (e.g. insert, delete, substition, transposition) to transform
+       one object to another.
 
        see: http://en.wikipedia.org/wiki/Damerau-Levenshtein_distance
 
@@ -31,6 +58,8 @@ def damerau_levenshtein(lhs, rhs):
        3
        >>> damerau_levenshtein('CA', 'ABC')
        2
+       >>> damerau_levenshtein('CABBAGE', 'EABBAGC')
+       1
    '''
    d = [range(len(lhs)+1) for i in range(len(rhs)+1)]
    for i in range(len(rhs)+1):
@@ -43,11 +72,11 @@ def damerau_levenshtein(lhs, rhs):
             d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1]) + 1
          if rhs[i-1] == lhs[j-2] and rhs[i-2] == lhs[j-1]:
             d[i][j] = min(d[i][j], d[i-1][j-1])
-   return d[-1][-1]
+   return Distance(d[-1][-1], lhs, rhs)
 
 def hamming(lhs, rhs):
-   ''' Compute the Hamming distance counting the number of positions in which
-       two objects of equal length differ.
+   ''' Compute the Hamming distance counting the number of positions
+       in which two objects of equal length differ.
 
        see: http://en.wikipedia.org/wiki/Hamming_distance
 
@@ -57,16 +86,18 @@ def hamming(lhs, rhs):
        2
        >>> hamming('2173896', '2233796')
        3
+       >>> hamming('CABBAGE', 'EABBAGC')
+       2
    '''
    if len(lhs) != len(rhs):
       raise IndexError('Cannot compute Hamming distance for strings of different sizes!')
-   return sum(l != r for l, r in zip(lhs, rhs))
+   return Distance(sum(l != r for l, r in zip(lhs, rhs)), lhs, rhs)
 
 def levenshtein(lhs, rhs):
    ''' Compute the Levenshtein distance counting the minimum number of edits
        (e.g. insert, delete, substition) to transform one object to another.
 
-       see: http://en.wikipedia.org/wiki/Levenshtein_distance 
+       see: http://en.wikipedia.org/wiki/Levenshtein_distance
 
        >>> levenshtein('kitten', 'sitting')
        3
@@ -74,6 +105,8 @@ def levenshtein(lhs, rhs):
        3
        >>> levenshtein('CA', 'ABC')
        3
+       >>> levenshtein('CABBAGE', 'EABBAGC')
+       2
    '''
    d = [range(len(lhs)+1) for i in range(len(rhs)+1)]
    for i in range(len(rhs)+1):
@@ -84,4 +117,4 @@ def levenshtein(lhs, rhs):
             d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1])
          else:
             d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1]) + 1
-   return d[-1][-1]
+   return Distance(d[-1][-1], lhs, rhs)
