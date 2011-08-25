@@ -12,4 +12,4 @@ print libdistance.levenshtein('kitten', 'sitting')
 
 Testing
 =======
-python -m doctest -v libdistance/__init__.py
+python -m doctest libdistance.py
