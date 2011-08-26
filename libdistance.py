@@ -108,13 +108,16 @@ def levenshtein(lhs, rhs):
        >>> levenshtein('CABBAGE', 'EABBAGC')
        2
    '''
-   d = [range(len(lhs)+1) for i in range(len(rhs)+1)]
-   for i in range(len(rhs)+1):
-      d[i][0] = i
-   for i in range(1, len(d)):
-      for j in range(1, len(d[0])):
-         if rhs[i-1] == lhs[j-1]:
-            d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1])
-         else:
-            d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1]) + 1
-   return Distance(d[-1][-1], lhs, rhs)
+   current = range(len(rhs) + 1)
+   shadow  = range(len(rhs) + 1)
+   for i in range(1, len(lhs) + 1):
+      current[0] = i
+      for j in range(1, len(rhs) + 1):
+         cost = 0 if lhs[i-1] == rhs[j-1] else 1
+         current[j] = cost + min(current[j-1], # insertion
+                                 shadow[j],    # deletion
+                                 shadow[j-1])  # substitution
+      temp    = current
+      current = shadow
+      shadow  = temp
+   return shadow[-1]
