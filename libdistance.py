@@ -57,9 +57,9 @@ def damerau_levenshtein(lhs, rhs):
        >>> damerau_levenshtein('Saturday', 'Sunday')
        3
        >>> damerau_levenshtein('CA', 'ABC')
-       2
+       3
        >>> damerau_levenshtein('CABBAGE', 'EABBAGC')
-       1
+       2
    '''
    d = [range(len(lhs)+1) for i in range(len(rhs)+1)]
    for i in range(len(rhs)+1):
@@ -70,7 +70,7 @@ def damerau_levenshtein(lhs, rhs):
             d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1])
          else:
             d[i][j] = min(d[i][j-1], d[i-1][j], d[i-1][j-1]) + 1
-         if rhs[i-1] == lhs[j-2] and rhs[i-2] == lhs[j-1]:
+         if j-2 >= 0 and i-2 >= 0 and rhs[i-1] == lhs[j-2] and rhs[i-2] == lhs[j-1]:
             d[i][j] = min(d[i][j], d[i-1][j-1])
    return Distance(d[-1][-1], lhs, rhs)
 
@@ -120,4 +120,4 @@ def levenshtein(lhs, rhs):
       temp    = current
       current = shadow
       shadow  = temp
-   return shadow[-1]
+   return Distance(shadow[-1], lhs, rhs)
